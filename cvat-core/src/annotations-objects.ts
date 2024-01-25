@@ -1038,6 +1038,37 @@ export class Track extends Drawn {
             })),
         };
 
+        // Try to keep old immutable attributes
+        for (const attribute of redoLabel.attributes) {
+            for (const oldAttribute of undoLabel.attributes) {
+                if (
+                    attribute.name === oldAttribute.name &&
+                    validateAttributeValue(undoAttributes.unmutable[oldAttribute.id], attribute)
+                ) {
+                    this.attributes[attribute.id] = undoAttributes.unmutable[oldAttribute.id];
+                }
+            }
+        }
+
+        // Try to keep old mutable attributes for each shape
+        for (const frameKey of Object.keys(this.shapes)) {
+            const oldShape = undoAttributes.mutable.find((old) => old.frame === +frameKey);
+            if (oldShape) {
+                for (const attribute of redoLabel.attributes) {
+                    for (const oldAttribute of undoLabel.attributes) {
+                        const oldValue = oldShape.attributes[oldAttribute.id];
+                        if (
+                            oldValue &&
+                            attribute.name === oldAttribute.name &&
+                            validateAttributeValue(oldValue, attribute)
+                        ) {
+                            this.shapes[frameKey].attributes[attribute.id] = oldValue;
+                        }
+                    }
+                }
+            }
+        }
+
         this.history.do(
             HistoryActions.CHANGED_LABEL,
             () => {
