@@ -304,7 +304,7 @@ RQ_QUEUES = {
         'HOST': 'localhost',
         'PORT': 6379,
         'DB': 0,
-        'DEFAULT_TIMEOUT': '4h'
+        'DEFAULT_TIMEOUT': '24h'
     },
     CVAT_QUEUES.EXPORT_DATA.value: {
         'HOST': 'localhost',
